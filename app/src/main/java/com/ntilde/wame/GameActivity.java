@@ -4,12 +4,12 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
 import com.ntilde.wame.model.Level;
-import com.ntilde.wame.views.WameCanvas;
+import com.ntilde.wame.views.wameCanvas;
 
 
 public class GameActivity extends ActionBarActivity {
 
-    private WameCanvas board;
+    private wameCanvas board;
 
     private Level level;
 
@@ -20,7 +20,7 @@ public class GameActivity extends ActionBarActivity {
 
         level=HomeActivity.levels.getLevel(HomeActivity.nextLevel);
 
-        board=(WameCanvas)findViewById(R.id.game_board);
+        board=(wameCanvas)findViewById(R.id.game_board);
         board.setLevel(level);
     }
 
