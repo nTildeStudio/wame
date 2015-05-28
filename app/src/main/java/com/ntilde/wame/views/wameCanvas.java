@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -27,6 +28,7 @@ public class wameCanvas extends View{
     private int actualOrder;
     private boolean gameOver;
     private boolean gameCompleted;
+    private long startedTime;
 
     private boolean firstExecution=true;
 
@@ -36,12 +38,15 @@ public class wameCanvas extends View{
     public wameCanvas(Context context) {
         super(context);
         this.context = context;
+        this.touchedPoints = new ArrayList<>();
+        startedTime = Calendar.getInstance().getTimeInMillis();
     }
 
     public wameCanvas(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
         this.touchedPoints = new ArrayList<>();
+        startedTime = Calendar.getInstance().getTimeInMillis();
     }
 
     @Override
@@ -52,6 +57,7 @@ public class wameCanvas extends View{
 
         drawTargets();
         drawTouchedPoints();
+        if(level.getTime() != Level.NO_TIME) drawTime();
     }
 
     public void initCanvas(Canvas canvas){
@@ -72,10 +78,25 @@ public class wameCanvas extends View{
 
     public void setLevel(Level level){
         this.level=level;
-        actualOrder = 1;
-        gameOver = false;
-        gameCompleted = false;
+        this.actualOrder = 1;
+        this.gameOver = false;
+        this.gameCompleted = false;
         restartTargets();
+    }
+
+    private void drawTime(){
+        long diference = level.getTime() - (Calendar.getInstance().getTimeInMillis() - startedTime) / 1000;
+        Paint timePaint = new Paint();
+        timePaint.setTypeface(Typeface.createFromAsset(context.getAssets(), "welbut.ttf"));
+        timePaint.setTextSize(40);
+        timePaint.setColor(Color.BLACK);
+        String text = String.valueOf(diference);
+        canvas.drawText(text, (float) 0.8 * getWidth(), (float) 0.1 * getHeight(), timePaint);
+        if(diference == 0){
+            gameOver();
+        }else {
+            postInvalidateDelayed(100);
+        }
     }
 
     private void drawTargets(){
@@ -107,17 +128,19 @@ public class wameCanvas extends View{
         final Paint touchedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         touchedPaint.setStyle(Paint.Style.STROKE);
         touchedPaint.setStrokeWidth(15);
-        touchedPaint.setColor(Color.parseColor(getColorOfMinOrder()));
 
         int painted = 0;
 
-        for(final TouchedPoint point : touchedPoints){
+        for (int i=0; i<touchedPoints.size(); i++){
+            TouchedPoint point = touchedPoints.get(i);
+
             long time = Calendar.getInstance().getTimeInMillis();
             long radius = (time - point.timestamp) / 5;
             double diagonal = Math.hypot(getWidth(), getHeight());
 
             if(radius < diagonal){
                 painted++;
+                touchedPaint.setColor(Color.parseColor(getColorOfOrder(i + 1)));
                 canvas.drawCircle(point.x, point.y, radius, touchedPaint);
 
                 int completedPoints = 0;
@@ -136,7 +159,7 @@ public class wameCanvas extends View{
 
                 if(completedPoints == getOrderPointsCount(actualOrder)){
                     removeOrderPoints(actualOrder);
-                    touchedPoints.remove(point);
+                    touchedPoints.remove(point); i--;
                     actualOrder++;
                     if(actualOrder>getMaxOrder()){
                         gameCompleted();
@@ -187,7 +210,9 @@ public class wameCanvas extends View{
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_POINTER_UP:
             case MotionEvent.ACTION_CANCEL: {
-                touchedPoints.add(f);
+                if(touchedPoints.size() < getMaxOrder()){
+                    touchedPoints.add(f);
+                }
                 break;
             }
         }
@@ -219,6 +244,19 @@ public class wameCanvas extends View{
             }
         }
         return count;
+    }
+
+    /**
+     * Returns color of n order
+     */
+    private String getColorOfOrder(int order){
+        String color = "#000000";
+        for (Position target : level.getPositions()){
+            if (target.getOrder() == order){
+                return color = target.getColor();
+            }
+        }
+        return color;
     }
 
     /**
