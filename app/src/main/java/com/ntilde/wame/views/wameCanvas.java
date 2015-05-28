@@ -4,19 +4,17 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PointF;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.ntilde.wame.model.Level;
 import com.ntilde.wame.model.Position;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 
 public class wameCanvas extends View{
@@ -25,6 +23,10 @@ public class wameCanvas extends View{
 
     private Canvas canvas;
     private Paint textPaint;
+
+    private int actualOrder;
+    private boolean gameOver;
+    private boolean gameCompleted;
 
     private boolean firstExecution=true;
 
@@ -48,7 +50,6 @@ public class wameCanvas extends View{
 
         initCanvas(canvas);
 
-        Log.i("XXX", "onDraw");
         drawTargets();
         drawTouchedPoints();
     }
@@ -71,19 +72,33 @@ public class wameCanvas extends View{
 
     public void setLevel(Level level){
         this.level=level;
+        actualOrder = 1;
+        gameOver = false;
+        gameCompleted = false;
+        restartTargets();
     }
 
     private void drawTargets(){
         Paint targetPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        Paint targetPaintTouched = new Paint(Paint.ANTI_ALIAS_FLAG);
         Paint orderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
         targetPaint.setStyle(Paint.Style.STROKE);
+        targetPaintTouched.setStyle(Paint.Style.FILL_AND_STROKE);
+
         targetPaint.setStrokeWidth(level.getPositions().get(0).getSize()*0.4f);
+        targetPaintTouched.setStrokeWidth(level.getPositions().get(0).getSize()*0.4f);
         orderPaint.setTextSize(level.getPositions().get(0).getSize()*4f);
         orderPaint.setTextAlign(Paint.Align.CENTER);
+
         for(Position target:level.getPositions()){
+            if(target.isCompleted()) continue;
             targetPaint.setColor(Color.parseColor(target.getColor()));
+            targetPaintTouched.setColor(Color.parseColor(target.getColor()));
+            targetPaintTouched.setAlpha(100);
             orderPaint.setColor(Color.parseColor(target.getColor()));
-            canvas.drawCircle(target.getPercentageX(), target.getPercentageY(), target.getPercentageSize(), targetPaint);
+
+            canvas.drawCircle(target.getPercentageX(), target.getPercentageY(), target.getPercentageSize(), target.getTouchedBy() != Position.DONT_TOUCHED ? targetPaintTouched : targetPaint);
             canvas.drawText(target.getOrder()+"",target.getPercentageX(),target.getPercentageY()+target.getSize()*2f,orderPaint);
         }
     }
@@ -92,37 +107,67 @@ public class wameCanvas extends View{
         final Paint touchedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         touchedPaint.setStyle(Paint.Style.STROKE);
         touchedPaint.setStrokeWidth(15);
-        touchedPaint.setColor(Color.GREEN);
+        touchedPaint.setColor(Color.parseColor(getColorOfMinOrder()));
+
+        int painted = 0;
 
         for(final TouchedPoint point : touchedPoints){
             long time = Calendar.getInstance().getTimeInMillis();
-            long diameter = 100 * (time - point.timestamp) / 1000;
-
+            long radius = (time - point.timestamp) / 5;
             double diagonal = Math.hypot(getWidth(), getHeight());
 
-            if(diameter < diagonal){
-                canvas.drawCircle(point.x, point.y, diameter, touchedPaint);
-            }else{
-                Log.i("XXX", "Se pasa!");
-            }
+            if(radius < diagonal){
+                painted++;
+                canvas.drawCircle(point.x, point.y, radius, touchedPaint);
 
+                int completedPoints = 0;
+                for(Position target:level.getPositions()){
+                    if(circleCollision(target.getPercentageX(), target.getPercentageY(), target.getPercentageSize(), point.x, point.y, radius)){
+                        if(actualOrder != target.getOrder()){
+                            gameOver();
+                        }else{
+                            target.setTouchedBy(point.touchedBy);
+                            completedPoints++;
+                        }
+                    }else{
+                        target.setTouchedBy(Position.DONT_TOUCHED);
+                    }
+                }
+
+                if(completedPoints == getOrderPointsCount(actualOrder)){
+                    removeOrderPoints(actualOrder);
+                    touchedPoints.remove(point);
+                    actualOrder++;
+                    if(actualOrder>getMaxOrder()){
+                        gameCompleted();
+                    }
+                }
+            }
+        }
+
+        if (painted > 0) {
             postInvalidateDelayed(10);
+        }else{
+            touchedPoints = new ArrayList<>();
         }
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        Log.i("XXX", "Toco");
+        if(gameOver || gameCompleted) return false;
 
         int pointerIndex = event.getActionIndex();
+        int pointerId = event.getPointerId(pointerIndex);
+
+        Log.i("XXX", "PointerIndex: " + pointerIndex);
+        Log.i("XXX", "PointerId: " + pointerId);
 
         TouchedPoint f = new TouchedPoint();
         f.x = event.getX(pointerIndex);
         f.y = event.getY(pointerIndex);
         f.timestamp = Calendar.getInstance().getTimeInMillis();
-
-        int pointerId = event.getPointerId(pointerIndex);
+        f.touchedBy = pointerId;
 
         int maskedAction = event.getActionMasked();
 
@@ -134,7 +179,7 @@ public class wameCanvas extends View{
                 break;
             }
 
-            case MotionEvent.ACTION_MOVE: { // a pointer was moved
+            case MotionEvent.ACTION_MOVE: {
 
                 break;
             }
@@ -152,11 +197,112 @@ public class wameCanvas extends View{
         return true;
     }
 
+    /**
+     * Remove order points of a order
+     */
+    private void removeOrderPoints(int order){
+        for (Position target : level.getPositions()){
+            if (target.getOrder() == order){
+                target.setCompleted(true);
+            }
+        }
+    }
 
+    /**
+     * Returns number of points of a order
+     */
+    private int getOrderPointsCount(int order){
+        int count = 0;
+        for (Position target : level.getPositions()){
+            if (target.getOrder() == order){
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Returns color of minimum order printable point
+     * @return
+     */
+    private String getColorOfMinOrder(){
+        String color = "#44ff44";
+        int min = 50;
+        for (Position target : level.getPositions()){
+            if (target.getOrder() < min && !target.isCompleted()){
+                min = target.getOrder();
+                color = target.getColor();
+            }
+        }
+        return color;
+    }
+
+    /**
+     * Return higgest order
+     */
+    private int getMaxOrder(){
+        int max = 0;
+        for (Position target : level.getPositions()){
+            if (target.getOrder() > max){
+                max = target.getOrder();
+            }
+        }
+        return max;
+    }
+
+    /**
+     *
+     * @param x1
+     * @param y1
+     * @param radius1
+     * @param x2
+     * @param y2
+     * @param radius2
+     * @return collision
+     */
+    private boolean circleCollision(float x1, float y1, float radius1, float x2, float y2, float radius2){
+        double xDif = x1 - x2;
+        double yDif = y1 - y2;
+        double distanceSquared = xDif * xDif + yDif * yDif;
+        boolean collision = distanceSquared < (radius1 + radius2) * (radius1 + radius2);
+        return collision;
+    }
+
+    /**
+     * All targets isn't complete and isn't touched by not
+     */
+    private void restartTargets(){
+        for (Position target : level.getPositions()){
+            target.restart();
+        }
+    }
+
+    /**
+     * GAME OVER
+     */
+    private void gameOver(){
+        gameOver = true;
+        touchedPoints = new ArrayList<>();
+        Toast.makeText(getContext(), "GAME OVER", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * GAME COMPLETED
+     */
+    private void gameCompleted(){
+        gameCompleted = true;
+        touchedPoints = new ArrayList<>();
+        Toast.makeText(getContext(), "YOU WIN", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Model to touched point
+     */
     class TouchedPoint{
         float x;
         float y;
         long timestamp;
+        int touchedBy;
     }
 
 }

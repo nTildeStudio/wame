@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class Position implements Serializable{
 
+    public static final int DONT_TOUCHED = -1;
+
     private int order;
     private int size;
     private String color;
@@ -12,6 +14,8 @@ public class Position implements Serializable{
 
     private int screenWidth;
     private int screenHeight;
+    private int touchedBy = DONT_TOUCHED; //Indicates if touched by any finger
+    private boolean completed = false; //Indicates if has been finished
 
     public int getX(){
         return x;
@@ -68,5 +72,26 @@ public class Position implements Serializable{
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public void setTouchedBy(int id){
+        touchedBy = id;
+    }
+
+    public int getTouchedBy(){
+        return touchedBy;
+    }
+
+    public void setCompleted (boolean completed){
+        this.completed = completed;
+    }
+
+    public boolean isCompleted(){
+        return completed;
+    }
+
+    public void restart() {
+        completed = false;
+        touchedBy = DONT_TOUCHED;
     }
 }
