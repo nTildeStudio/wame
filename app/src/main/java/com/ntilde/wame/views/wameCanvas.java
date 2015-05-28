@@ -57,7 +57,7 @@ public class wameCanvas extends View{
 
         drawTargets();
         drawTouchedPoints();
-        if(level.getTime() != Level.NO_TIME) drawTime();
+        if(level.getTime() != Level.NO_TIME && !gameOver && !gameCompleted) drawTime();
     }
 
     public void initCanvas(Canvas canvas){
@@ -90,8 +90,9 @@ public class wameCanvas extends View{
         timePaint.setTypeface(Typeface.createFromAsset(context.getAssets(), "welbut.ttf"));
         timePaint.setTextSize(40);
         timePaint.setColor(Color.BLACK);
+        timePaint.setTextAlign(Paint.Align.RIGHT);
         String text = String.valueOf(diference);
-        canvas.drawText(text, (float) 0.8 * getWidth(), (float) 0.1 * getHeight(), timePaint);
+        canvas.drawText(text, (float) 0.9 * getWidth(), (float) 0.1 * getHeight(), timePaint);
         if(diference == 0){
             gameOver();
         }else {
@@ -140,7 +141,7 @@ public class wameCanvas extends View{
 
             if(radius < diagonal){
                 painted++;
-                touchedPaint.setColor(Color.parseColor(getColorOfOrder(i + 1)));
+                touchedPaint.setColor(Color.parseColor(getColorOfOrder(actualOrder + i)));
                 canvas.drawCircle(point.x, point.y, radius, touchedPaint);
 
                 int completedPoints = 0;
