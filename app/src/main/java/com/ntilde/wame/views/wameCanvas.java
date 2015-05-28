@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -302,8 +303,9 @@ public class wameCanvas extends View{
     private boolean circleCollision(float x1, float y1, float radius1, float x2, float y2, float radius2){
         double xDif = x1 - x2;
         double yDif = y1 - y2;
-        double distanceSquared = xDif * xDif + yDif * yDif;
-        boolean collision = distanceSquared < (radius1 + radius2) * (radius1 + radius2);
+
+        double distance = Math.hypot(xDif, yDif);
+        boolean collision = (distance < radius1 + radius2) && (radius2 < distance + radius1);
         return collision;
     }
 
