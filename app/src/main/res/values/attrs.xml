@@ -1,0 +1,6 @@
+<resources>
+    <declare-styleable name="PTextView">
+        <attr name="ptv_height" format="float" />
+        <attr name="ptv_font_asset" format="string" />
+    </declare-styleable>
+</resources>
