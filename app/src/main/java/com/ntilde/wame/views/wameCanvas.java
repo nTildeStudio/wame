@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -35,7 +34,6 @@ public class wameCanvas extends View{
     private Level level;
     private ArrayList<TouchedPoint> touchedPoints;
     private int touchedPointsCount;
-    private int previousTouchedTargets;
 
     public wameCanvas(Context context) {
         super(context);
@@ -53,7 +51,6 @@ public class wameCanvas extends View{
         this.touchedPoints = new ArrayList<>();
         this.touchedPointsCount = 0;
         this.startedTime = Calendar.getInstance().getTimeInMillis();
-        this.previousTouchedTargets = 0;
         invalidate();
     }
 
@@ -146,7 +143,9 @@ public class wameCanvas extends View{
 
             long timeNow = Calendar.getInstance().getTimeInMillis();
             long radius = (timeNow - point.timestamp) / 5;
-            double diagonal = Math.hypot(getWidth(), getHeight());
+
+//            double diagonal = Math.hypot(getWidth(), getHeight());
+            double diagonal = Math.hypot(Math.max(point.x, getWidth()-point.x), Math.max(point.y, getHeight()-point.y));
 
             if(radius < diagonal){
                 painted++;
@@ -167,21 +166,14 @@ public class wameCanvas extends View{
                     }
                 }
 
-                if(previousTouchedTargets <= completedPoints) {
-                    previousTouchedTargets = completedPoints;
-
-                    if (completedPoints == getOrderPointsCount(actualOrder)) {
-                        previousTouchedTargets = 0;
-                        removeOrderPoints(actualOrder);
-                        touchedPoints.remove(point);
-                        i--;
-                        actualOrder++;
-                        if (actualOrder > getMaxOrder()) {
-                            gameCompleted();
-                        }
+                if (completedPoints == getOrderPointsCount(actualOrder)) {
+                    removeOrderPoints(actualOrder);
+                    touchedPoints.remove(point);
+                    i--;
+                    actualOrder++;
+                    if (actualOrder > getMaxOrder()) {
+                        gameCompleted();
                     }
-                }else{
-                    gameOver();
                 }
             }
         }
@@ -223,7 +215,7 @@ public class wameCanvas extends View{
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_POINTER_UP:
             case MotionEvent.ACTION_CANCEL: {
-                if(touchedPointsCount <= getMaxOrder()){
+                if(touchedPointsCount < getMaxOrder()){
                     touchedPointsCount++;
                     touchedPoints.add(f);
                 }
