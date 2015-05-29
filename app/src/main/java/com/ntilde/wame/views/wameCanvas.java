@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -67,7 +68,7 @@ public class wameCanvas extends View{
 
     public void initCanvas(Canvas canvas){
         this.canvas = canvas;
-        this.canvas.drawColor(Color.parseColor("#ffffff"));
+        this.canvas.drawColor(android.R.color.transparent);
         if (firstExecution){
             initPaints();
             drawTargets();
@@ -106,26 +107,30 @@ public class wameCanvas extends View{
     }
 
     private void drawTargets(){
+        Paint targetPaintBackground = new Paint(Paint.ANTI_ALIAS_FLAG);
         Paint targetPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         Paint targetPaintTouched = new Paint(Paint.ANTI_ALIAS_FLAG);
         Paint orderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
+        targetPaintBackground.setStyle(Paint.Style.FILL_AND_STROKE);
         targetPaint.setStyle(Paint.Style.STROKE);
         targetPaintTouched.setStyle(Paint.Style.FILL_AND_STROKE);
-
-        targetPaint.setStrokeWidth(level.getPositions().get(0).getSize()*0.4f);
-        targetPaintTouched.setStrokeWidth(level.getPositions().get(0).getSize()*0.4f);
-        orderPaint.setTextSize(level.getPositions().get(0).getSize()*4f);
         orderPaint.setTextAlign(Paint.Align.CENTER);
+
+        targetPaintBackground.setColor(Color.WHITE);
 
         for(Position target:level.getPositions()){
             if(target.getOrder()<actualOrder) continue;
+            targetPaint.setStrokeWidth(getHeight()*0.007f);
+            targetPaintTouched.setStrokeWidth(getHeight()*0.01f);
+            orderPaint.setTextSize(target.getPercentageSize()*0.6f);
             int color=context.getResources().getColor(getResources().getIdentifier("targetColor"+target.getOrder(), "color", context.getPackageName()));
             targetPaint.setColor(color);
             targetPaintTouched.setColor(color);
             targetPaintTouched.setAlpha(100);
             orderPaint.setColor(color);
 
+            canvas.drawCircle(target.getPercentageX(), target.getPercentageY(), target.getPercentageSize(), targetPaintBackground);
             canvas.drawCircle(target.getPercentageX(), target.getPercentageY(), target.getPercentageSize(), target.isTouched() ? targetPaintTouched : targetPaint);
             canvas.drawText(target.getOrder()+"",target.getPercentageX(),target.getPercentageY()+target.getSize()*2f,orderPaint);
         }
@@ -144,7 +149,6 @@ public class wameCanvas extends View{
             long timeNow = Calendar.getInstance().getTimeInMillis();
             long radius = (timeNow - point.timestamp) / 5;
 
-//            double diagonal = Math.hypot(getWidth(), getHeight());
             double diagonal = Math.hypot(Math.max(point.x, getWidth()-point.x), Math.max(point.y, getHeight()-point.y));
 
             if(radius < diagonal){
@@ -175,6 +179,8 @@ public class wameCanvas extends View{
                         gameCompleted();
                     }
                 }
+            }else{
+                gameOver();
             }
         }
 
