@@ -1,0 +1,12 @@
+<resources>
+    <color name="targetColor1">#F44336</color>
+    <color name="targetColor2">#2196F3</color>
+    <color name="targetColor3">#009688</color>
+    <color name="targetColor4">#9C27B0</color>
+    <color name="targetColor5">#CDDC39</color>
+    <color name="targetColor6">#FFC107</color>
+    <color name="targetColor7">#795548</color>
+    <color name="targetColor8">#1DE9B6</color>
+    <color name="targetColor9">#F50057</color>
+    <color name="targetColor10">#78909C</color>
+</resources>

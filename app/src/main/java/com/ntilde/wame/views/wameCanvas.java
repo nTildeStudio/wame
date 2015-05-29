@@ -121,10 +121,12 @@ public class wameCanvas extends View{
 
         for(Position target:level.getPositions()){
             if(target.getOrder()<actualOrder) continue;
-            targetPaint.setColor(Color.parseColor(target.getColor()));
-            targetPaintTouched.setColor(Color.parseColor(target.getColor()));
+            //targetPaint.setColor(Color.parseColor(target.getColor()));
+            int color=context.getResources().getColor(getResources().getIdentifier("targetColor"+target.getOrder(), "color", context.getPackageName()));
+            targetPaint.setColor(color);
+            targetPaintTouched.setColor(color);
             targetPaintTouched.setAlpha(100);
-            orderPaint.setColor(Color.parseColor(target.getColor()));
+            orderPaint.setColor(color);
 
             canvas.drawCircle(target.getPercentageX(), target.getPercentageY(), target.getPercentageSize(), target.isTouched() ? targetPaintTouched : targetPaint);
             canvas.drawText(target.getOrder()+"",target.getPercentageX(),target.getPercentageY()+target.getSize()*2f,orderPaint);
@@ -147,7 +149,7 @@ public class wameCanvas extends View{
 
             if(radius < diagonal){
                 painted++;
-                touchedPaint.setColor(Color.parseColor(getColorOfOrder(actualOrder + i)));
+                touchedPaint.setColor(getColorOfOrder(actualOrder + i));
                 canvas.drawCircle(point.x, point.y, radius, touchedPaint);
 
                 int completedPoints = 0;
@@ -255,11 +257,11 @@ public class wameCanvas extends View{
     /**
      * Returns color of n order
      */
-    private String getColorOfOrder(int order){
-        String color = "#000000";
+    private int getColorOfOrder(int order){
+        int color = Color.BLACK;
         for (Position target : level.getPositions()){
             if (target.getOrder() == order){
-                return color = target.getColor();
+                return context.getResources().getColor(getResources().getIdentifier("targetColor"+target.getOrder(), "color", context.getPackageName()));
             }
         }
         return color;
@@ -269,13 +271,13 @@ public class wameCanvas extends View{
      * Returns color of minimum order printable point
      * @return
      */
-    private String getColorOfMinOrder(){
-        String color = "#44ff44";
+    private int getColorOfMinOrder(){
+        int color = Color.BLACK;
         int min = 50;
         for (Position target : level.getPositions()){
             if (target.getOrder() < min && !target.isCompleted()){
                 min = target.getOrder();
-                color = target.getColor();
+                color = context.getResources().getColor(getResources().getIdentifier("targetColor"+target.getOrder(), "color", context.getPackageName()));
             }
         }
         return color;
