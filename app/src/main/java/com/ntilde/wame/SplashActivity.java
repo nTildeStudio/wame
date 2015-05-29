@@ -35,29 +35,32 @@ public class SplashActivity extends ActionBarActivity{
             }
 
             @Override
-            public void onAnimationEnd(Animation animation) {
-                Animation fadeInAnimation = AnimationUtils.loadAnimation(SplashActivity.this, R.anim.splash_fade_in);
-                fadeInAnimation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {}
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        Intent i = new Intent(SplashActivity.this, HomeActivity.class);
-                        startActivity(i);
-                        overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {}
-                });
-                colorLogo.setVisibility(View.VISIBLE);
-                colorLogo.startAnimation(fadeInAnimation);
-            }
+            public void onAnimationEnd(Animation animation) {}
 
             @Override
             public void onAnimationRepeat(Animation animation) {}
         });
         whiteLogo.startAnimation(fadeInAnimation);
+
+        Animation fadeInAnimation2 = AnimationUtils.loadAnimation(SplashActivity.this, R.anim.splash_fade_in);
+        fadeInAnimation2.setStartOffset(1000);
+        fadeInAnimation2.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                colorLogo.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                Intent i = new Intent(SplashActivity.this, HomeActivity.class);
+                startActivity(i);
+                overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
+                finish();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+        colorLogo.startAnimation(fadeInAnimation2);
     }
 }
