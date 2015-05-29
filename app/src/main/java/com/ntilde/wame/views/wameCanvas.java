@@ -49,6 +49,11 @@ public class wameCanvas extends View{
         startedTime = Calendar.getInstance().getTimeInMillis();
     }
 
+    public void start(){
+        startedTime = Calendar.getInstance().getTimeInMillis();
+        invalidate();
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);

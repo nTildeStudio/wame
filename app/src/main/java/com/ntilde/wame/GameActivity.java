@@ -35,7 +35,7 @@ public class GameActivity extends ActionBarActivity {
     private void getActualLevel(){
         level=HomeActivity.levels.getLevel(HomeActivity.nextLevel);
         board.setLevel(level);
-        board.invalidate();
+        board.start();
     }
 
     public void showWin(){
