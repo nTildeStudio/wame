@@ -9,8 +9,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
+import com.ntilde.wame.GameActivity;
 import com.ntilde.wame.model.Level;
 import com.ntilde.wame.model.Position;
 
@@ -114,13 +114,13 @@ public class wameCanvas extends View{
         orderPaint.setTextAlign(Paint.Align.CENTER);
 
         for(Position target:level.getPositions()){
-            if(target.isCompleted()) continue;
+            if(target.getOrder()<actualOrder) continue;
             targetPaint.setColor(Color.parseColor(target.getColor()));
             targetPaintTouched.setColor(Color.parseColor(target.getColor()));
             targetPaintTouched.setAlpha(100);
             orderPaint.setColor(Color.parseColor(target.getColor()));
 
-            canvas.drawCircle(target.getPercentageX(), target.getPercentageY(), target.getPercentageSize(), target.getTouchedBy() != Position.DONT_TOUCHED ? targetPaintTouched : targetPaint);
+            canvas.drawCircle(target.getPercentageX(), target.getPercentageY(), target.getPercentageSize(), target.isTouched() ? targetPaintTouched : targetPaint);
             canvas.drawText(target.getOrder()+"",target.getPercentageX(),target.getPercentageY()+target.getSize()*2f,orderPaint);
         }
     }
@@ -135,8 +135,8 @@ public class wameCanvas extends View{
         for (int i=0; i<touchedPoints.size(); i++){
             TouchedPoint point = touchedPoints.get(i);
 
-            long time = Calendar.getInstance().getTimeInMillis();
-            long radius = (time - point.timestamp) / 5;
+            long timeNow = Calendar.getInstance().getTimeInMillis();
+            long radius = (timeNow - point.timestamp) / 5;
             double diagonal = Math.hypot(getWidth(), getHeight());
 
             if(radius < diagonal){
@@ -147,7 +147,7 @@ public class wameCanvas extends View{
                 int completedPoints = 0;
                 for(Position target:level.getPositions()){
                     if(circleCollision(target.getPercentageX(), target.getPercentageY(), target.getPercentageSize(), point.x, point.y, radius)){
-                        if(actualOrder != target.getOrder()){
+                        if(actualOrder != target.getOrder() && !target.isCompleted()){
                             gameOver();
                         }else{
                             target.setTouchedBy(point.touchedBy);
@@ -321,7 +321,7 @@ public class wameCanvas extends View{
     private void gameOver(){
         gameOver = true;
         touchedPoints = new ArrayList<>();
-        Toast.makeText(getContext(), "GAME OVER", Toast.LENGTH_SHORT).show();
+        ((GameActivity) context).showLose();
     }
 
     /**
@@ -329,8 +329,9 @@ public class wameCanvas extends View{
      */
     private void gameCompleted(){
         gameCompleted = true;
+        drawTargets();
         touchedPoints = new ArrayList<>();
-        Toast.makeText(getContext(), "YOU WIN", Toast.LENGTH_SHORT).show();
+        ((GameActivity) context).showWin();
     }
 
     /**

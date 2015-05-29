@@ -82,6 +82,10 @@ public class Position implements Serializable{
         return touchedBy;
     }
 
+    public boolean isTouched(){
+        return touchedBy != DONT_TOUCHED;
+    }
+
     public void setCompleted (boolean completed){
         this.completed = completed;
     }

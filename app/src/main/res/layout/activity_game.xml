@@ -239,7 +239,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="55"
                         android:adjustViewBounds="true"
-                        android:src="@drawable/game_lose_icon"/>
+                        android:src="@drawable/game_win_icon"/>
 
                 </LinearLayout>
 
