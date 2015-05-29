@@ -152,8 +152,8 @@ public class wameCanvas extends View{
 
                 int completedPoints = 0;
                 for(Position target:level.getPositions()){
-                    if(circleCollision(target.getPercentageX(), target.getPercentageY(), target.getPercentageSize(), point.x, point.y, radius)){
-                        if(actualOrder != target.getOrder() && !target.isCompleted()){
+                    if(circleCollision(target.getPercentageX(), target.getPercentageY(), target.getPercentageSize(), point.x, point.y, radius) && !target.isCompleted()){
+                        if(actualOrder != target.getOrder()){
                             gameOver();
                         }else{
                             target.setTouchedBy(point.touchedBy);
