@@ -8,6 +8,8 @@ import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -32,6 +34,7 @@ public class HomeActivity extends ActionBarActivity {
 
         levels = loadLevels();
 
+        nextLevel=maxLevel;
         ((TextView)findViewById(R.id.home_level_selected)).setText("Level "+(HomeActivity.maxLevel+1));
 
         findViewById(R.id.home_level_selector_spinner).setOnClickListener(new View.OnClickListener(){
@@ -72,6 +75,9 @@ public class HomeActivity extends ActionBarActivity {
             }
         });
 
+        Animation fadeInAnimation2 = AnimationUtils.loadAnimation(this, R.anim.logo_pulse);
+        findViewById(R.id.home_play_icon).startAnimation(fadeInAnimation2);
+
         findViewById(R.id.home_level_selector_block).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,6 +98,17 @@ public class HomeActivity extends ActionBarActivity {
                 HomeActivity.this.startActivity(new Intent(HomeActivity.this, GameActivity.class));
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        View level_block=findViewById(R.id.home_level_selector_block);
+        if(level_block.getVisibility()==View.VISIBLE){
+            level_block.setVisibility(View.GONE);
+        }
+        else{
+            super.onBackPressed();
+        }
     }
 
     public Levels loadLevels() {
