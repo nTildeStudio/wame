@@ -34,23 +34,24 @@ public class wameCanvas extends View{
 
     private Level level;
     private ArrayList<TouchedPoint> touchedPoints;
+    private int touchedPointsCount;
 
     public wameCanvas(Context context) {
         super(context);
         this.context = context;
-        this.touchedPoints = new ArrayList<>();
-        startedTime = Calendar.getInstance().getTimeInMillis();
+        start();
     }
 
     public wameCanvas(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
-        this.touchedPoints = new ArrayList<>();
-        startedTime = Calendar.getInstance().getTimeInMillis();
+        start();
     }
 
     public void start(){
-        startedTime = Calendar.getInstance().getTimeInMillis();
+        this.touchedPoints = new ArrayList<>();
+        this.touchedPointsCount = 0;
+        this.startedTime = Calendar.getInstance().getTimeInMillis();
         invalidate();
     }
 
@@ -214,7 +215,8 @@ public class wameCanvas extends View{
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_POINTER_UP:
             case MotionEvent.ACTION_CANCEL: {
-                if(touchedPoints.size() < getMaxOrder()){
+                if(touchedPointsCount <= getMaxOrder()){
+                    touchedPointsCount++;
                     touchedPoints.add(f);
                 }
                 break;
