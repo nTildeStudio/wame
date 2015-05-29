@@ -8,7 +8,6 @@ public class Position implements Serializable{
 
     private int order;
     private int size;
-    private String color;
     private int x;
     private int y;
 
@@ -64,14 +63,6 @@ public class Position implements Serializable{
 
     public int getPercentageSize(){
         return size*screenWidth/100;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
     }
 
     public void setTouchedBy(int id){
