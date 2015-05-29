@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -170,10 +169,11 @@ public class wameCanvas extends View{
             }
         }
 
-        if (painted > 0) {
+        if (painted > 0 && !gameOver && !gameCompleted) {
+            Log.i("XXX", "Vuelvo a pintar");
             postInvalidateDelayed(10);
         }else{
-            touchedPoints = new ArrayList<>();
+            Log.i("XXX", "Se acabó!");
         }
     }
 
@@ -184,9 +184,6 @@ public class wameCanvas extends View{
 
         int pointerIndex = event.getActionIndex();
         int pointerId = event.getPointerId(pointerIndex);
-
-        Log.i("XXX", "PointerIndex: " + pointerIndex);
-        Log.i("XXX", "PointerId: " + pointerId);
 
         TouchedPoint f = new TouchedPoint();
         f.x = event.getX(pointerIndex);

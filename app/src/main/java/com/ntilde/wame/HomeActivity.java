@@ -22,7 +22,7 @@ import java.io.InputStream;
 public class HomeActivity extends ActionBarActivity {
 
     protected static int nextLevel=0;
-    protected static int maxLevel=1;
+    protected static int maxLevel=2;
     protected static Levels levels;
 
     @Override

@@ -16,7 +16,16 @@
             ],
             "time":10
         },
-        {},
+        {
+            "positions":[
+                {"order":1,"x":25,"y":25,"size":8,"color":"#ff4400"},
+                {"order":1,"x":25,"y":75,"size":8,"color":"#ff4400"},
+                {"order":1,"x":50,"y":75,"size":8,"color":"#ff4400"},
+                {"order":2,"x":75,"y":25,"size":8,"color":"#44ff00"},
+                {"order":2,"x":75,"y":75,"size":8,"color":"#44ff00"}
+            ],
+            "time":-1
+        },
         {},
         {},
         {},
