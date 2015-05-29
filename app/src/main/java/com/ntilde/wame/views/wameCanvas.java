@@ -35,6 +35,7 @@ public class wameCanvas extends View{
     private Level level;
     private ArrayList<TouchedPoint> touchedPoints;
     private int touchedPointsCount;
+    private int previousTouchedTargets;
 
     public wameCanvas(Context context) {
         super(context);
@@ -52,6 +53,7 @@ public class wameCanvas extends View{
         this.touchedPoints = new ArrayList<>();
         this.touchedPointsCount = 0;
         this.startedTime = Calendar.getInstance().getTimeInMillis();
+        this.previousTouchedTargets = 0;
         invalidate();
     }
 
@@ -121,7 +123,6 @@ public class wameCanvas extends View{
 
         for(Position target:level.getPositions()){
             if(target.getOrder()<actualOrder) continue;
-            //targetPaint.setColor(Color.parseColor(target.getColor()));
             int color=context.getResources().getColor(getResources().getIdentifier("targetColor"+target.getOrder(), "color", context.getPackageName()));
             targetPaint.setColor(color);
             targetPaintTouched.setColor(color);
@@ -166,22 +167,27 @@ public class wameCanvas extends View{
                     }
                 }
 
-                if(completedPoints == getOrderPointsCount(actualOrder)){
-                    removeOrderPoints(actualOrder);
-                    touchedPoints.remove(point); i--;
-                    actualOrder++;
-                    if(actualOrder>getMaxOrder()){
-                        gameCompleted();
+                if(previousTouchedTargets <= completedPoints) {
+                    previousTouchedTargets = completedPoints;
+
+                    if (completedPoints == getOrderPointsCount(actualOrder)) {
+                        previousTouchedTargets = 0;
+                        removeOrderPoints(actualOrder);
+                        touchedPoints.remove(point);
+                        i--;
+                        actualOrder++;
+                        if (actualOrder > getMaxOrder()) {
+                            gameCompleted();
+                        }
                     }
+                }else{
+                    gameOver();
                 }
             }
         }
 
         if (painted > 0 && !gameOver && !gameCompleted) {
-            Log.i("XXX", "Vuelvo a pintar");
             postInvalidateDelayed(10);
-        }else{
-            Log.i("XXX", "Se acabó!");
         }
     }
 
@@ -277,7 +283,7 @@ public class wameCanvas extends View{
         for (Position target : level.getPositions()){
             if (target.getOrder() < min && !target.isCompleted()){
                 min = target.getOrder();
-                color = context.getResources().getColor(getResources().getIdentifier("targetColor"+target.getOrder(), "color", context.getPackageName()));
+                color = context.getResources().getColor(getResources().getIdentifier("targetColor" + target.getOrder(), "color", context.getPackageName()));
             }
         }
         return color;
