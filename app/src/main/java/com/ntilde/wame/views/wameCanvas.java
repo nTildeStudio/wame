@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -17,7 +16,6 @@ import com.ntilde.wame.model.Position;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -122,7 +120,7 @@ public class wameCanvas extends View{
         targetPaintTouched.setStyle(Paint.Style.FILL_AND_STROKE);
         orderPaint.setTextAlign(Paint.Align.CENTER);
 
-        targetPaintBackground.setColor(Color.WHITE);
+        targetPaintBackground.setColor(Color.argb(130,255,255,255));
 
         for(Position target:level.getPositions()){
             if(target.getOrder()<actualOrder) continue;
