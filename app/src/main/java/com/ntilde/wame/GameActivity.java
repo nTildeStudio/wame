@@ -37,6 +37,7 @@ public class GameActivity extends ActionBarActivity {
 
         music = MediaPlayer.create(this, R.raw.arcade);
         music.setLooping(true);
+        music.setVolume(.3f,.3f);
         music.start();
     }
 

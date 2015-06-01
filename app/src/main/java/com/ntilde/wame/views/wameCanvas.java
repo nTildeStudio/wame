@@ -4,9 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Typeface;
+import android.media.MediaPlayer;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -263,6 +262,7 @@ public class wameCanvas extends View{
             case MotionEvent.ACTION_POINTER_UP:
             case MotionEvent.ACTION_CANCEL: {
                 if(touchedPointsCount < getMaxOrder()){
+                    MediaPlayer.create(context, R.raw.pop).start();
                     touchedPointsCount++;
                     touchedPoints.add(f);
                 }
