@@ -227,6 +227,7 @@
 
                 <!-- Boton compartir -->
                 <LinearLayout
+                    android:id="@+id/home_share_google_play"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="3"
@@ -260,6 +261,7 @@
 
                 <!-- Boton votar -->
                 <LinearLayout
+                    android:id="@+id/home_rate_google_play"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="3"

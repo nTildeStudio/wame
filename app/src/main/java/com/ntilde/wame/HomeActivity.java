@@ -2,6 +2,7 @@ package com.ntilde.wame;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -109,6 +110,32 @@ public class HomeActivity extends ActionBarActivity {
                 HomeActivity.this.startActivity(new Intent(HomeActivity.this, GameActivity.class));
             }
         });
+
+        findViewById(R.id.home_share_google_play).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String shareBody = "https://play.google.com/store/apps/details?id=com.ntilde.wame";
+
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Wame");
+
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(sharingIntent, getResources().getString(R.string.home_share_google_play)));
+            }
+        });
+
+        findViewById(R.id.home_rate_google_play).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("market://details?id=com.ntilde.wame"));
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
