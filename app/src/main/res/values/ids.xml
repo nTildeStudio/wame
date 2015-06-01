@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_id">650168746606</string>
+    <string name="ach_wame_newbie">CgkI7oTPiPYSEAIQAQ</string>
+    <string name="ach_wame_beginner">CgkI7oTPiPYSEAIQAg</string>
+    <string name="ach_wame_intermediate">CgkI7oTPiPYSEAIQAw</string>
+    <string name="ach_wame_advenced">CgkI7oTPiPYSEAIQBA</string>
+    <string name="ach_wame_expert">CgkI7oTPiPYSEAIQBQ</string>
+    <string name="ach_wame_usane">CgkI7oTPiPYSEAIQCA</string>
+    <string name="rnk_hard">CgkI7oTPiPYSEAIQBw</string>
+    <string name="rnk_easy">CgkI7oTPiPYSEAIQBg</string>
+</resources>
