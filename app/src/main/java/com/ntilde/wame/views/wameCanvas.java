@@ -147,7 +147,7 @@ public class wameCanvas extends View{
             TouchedPoint point = touchedPoints.get(i);
 
             long timeNow = Calendar.getInstance().getTimeInMillis();
-            long radius = (timeNow - point.timestamp) / 5;
+            long radius = ((timeNow - point.timestamp) / 5) * level.getSpeed().get(actualOrder-1);
 
             double diagonal = Math.hypot(Math.max(point.x, getWidth()-point.x), Math.max(point.y, getHeight()-point.y));
 
