@@ -3,6 +3,7 @@ package com.ntilde.wame;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.ntilde.wame.model.Level;
@@ -14,6 +15,7 @@ public class GameActivity extends ActionBarActivity {
     private wameCanvas board;
     private LinearLayout winBlock;
     private LinearLayout loseBlock;
+    private ImageView restart;
 
     private Level level;
 
@@ -30,6 +32,14 @@ public class GameActivity extends ActionBarActivity {
         board=(wameCanvas)findViewById(R.id.game_board);
         winBlock = (LinearLayout) findViewById(R.id.game_win_block);
         loseBlock = (LinearLayout) findViewById(R.id.game_lose_block);
+        restart = (ImageView) findViewById(R.id.game_restart);
+
+        restart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActualLevel();
+            }
+        });
     }
 
     private void getActualLevel(){

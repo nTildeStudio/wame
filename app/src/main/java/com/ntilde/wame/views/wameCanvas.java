@@ -10,7 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.ntilde.wame.GameActivity;
-import com.ntilde.wame.HomeActivity;
+import com.ntilde.wame.R;
 import com.ntilde.wame.model.Level;
 import com.ntilde.wame.model.Position;
 
@@ -66,7 +66,6 @@ public class wameCanvas extends View{
         drawBottomBar();
         drawTargets();
         drawTouchedPoints();
-        if(level.getTime() != Level.NO_TIME && !gameOver && !gameCompleted) drawTime();
     }
 
     public void initCanvas(Canvas canvas){
@@ -94,19 +93,22 @@ public class wameCanvas extends View{
     }
 
     private void drawTime(){
-        long diference = level.getTime() - (Calendar.getInstance().getTimeInMillis() - startedTime) / 1000;
-        Paint timePaint = new Paint();
-        timePaint.setTypeface(Typeface.createFromAsset(context.getAssets(), "welbut.ttf"));
-        timePaint.setTextSize(40);
-        timePaint.setColor(Color.BLACK);
-        timePaint.setTextAlign(Paint.Align.RIGHT);
-        String text = String.valueOf(diference) + "\"";
-        canvas.drawText(text, (float) 0.95 * getWidth(), (float) 0.06 * getHeight(), timePaint);
-        if(diference == 0){
-            gameOver();
-        }else {
-            postInvalidateDelayed(100);
+        PTextView tvTime = ((PTextView) ((GameActivity) context).findViewById(R.id.game_time));
+
+        if(level.getTime() != Level.NO_TIME && !gameOver && !gameCompleted){
+            tvTime.setVisibility(View.VISIBLE);
+            long diference = level.getTime() - (Calendar.getInstance().getTimeInMillis() - startedTime) / 1000;
+            String text = String.valueOf(diference) + "\"";
+            tvTime.setText(text);
+            if(diference == 0){
+                gameOver();
+            }else {
+                postInvalidateDelayed(100);
+            }
+        }else{
+            tvTime.setVisibility(View.GONE);
         }
+
     }
 
     private void drawTargets(){
@@ -195,20 +197,16 @@ public class wameCanvas extends View{
 
     private void drawTopBar(){
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.BLACK);
-        paint.setTypeface(Typeface.createFromAsset(context.getAssets(), "welbut.ttf"));
-        paint.setTextSize(40);
-        String text = "LEVEL " + HomeActivity.nextLevel;
-        canvas.drawText(text, getWidth() / 2 - paint.measureText(text)/2, (float) 0.06 * getHeight(), paint);
-
         for(int i=0; i<getMaxOrder(); i++){
             paint.setColor(getColorOfOrder(i+1));
             canvas.drawRect(i*getWidth()/getMaxOrder(),
-                            (float) (getHeight()-getHeight()*0.91),
+                            0,
                             i*getWidth()/getMaxOrder()+getWidth()/getMaxOrder(),
-                            (float) (getHeight()-getHeight()*0.9),
+                            (float) (getHeight()-getHeight()*0.99),
                             paint);
         }
+
+        drawTime();
     }
 
     private void drawBottomBar(){
