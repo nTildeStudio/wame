@@ -91,7 +91,7 @@ public class wameCanvas extends View{
         this.actualOrder = 1;
         this.gameOver = false;
         this.gameCompleted = false;
-        ((PTextView)((GameActivity) context).findViewById(R.id.game_title)).setText("LEVEL " + HomeActivity.nextLevel+1);
+        ((PTextView)((GameActivity) context).findViewById(R.id.game_title)).setText("LEVEL " + (HomeActivity.nextLevel+1));
         restartTargets();
     }
 
