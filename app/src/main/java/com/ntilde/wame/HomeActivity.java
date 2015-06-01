@@ -2,6 +2,7 @@ package com.ntilde.wame;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
@@ -26,6 +27,16 @@ public class HomeActivity extends ActionBarActivity {
     public static int nextLevel=0;
     protected static int maxLevel=6;
     protected static Levels levels;
+    private MediaPlayer music;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        music = MediaPlayer.create(this, R.raw.arcade);
+        music.setLooping(true);
+        music.start();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,4 +138,9 @@ public class HomeActivity extends ActionBarActivity {
         return new Gson().fromJson(json,Levels.class);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        music.stop();
+    }
 }
