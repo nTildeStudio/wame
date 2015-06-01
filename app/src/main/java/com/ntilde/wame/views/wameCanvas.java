@@ -4,8 +4,10 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.media.MediaPlayer;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -66,6 +68,7 @@ public class wameCanvas extends View{
         drawTopBar();
         drawBottomBar();
         drawTargets();
+        drawLines();
         drawTouchedPoints();
     }
 
@@ -140,6 +143,21 @@ public class wameCanvas extends View{
             canvas.drawCircle(target.getPercentageX(), target.getPercentageY(), target.getPercentageSize(), targetPaintBackground);
             canvas.drawCircle(target.getPercentageX(), target.getPercentageY(), target.getPercentageSize(), target.isTouched() ? targetPaintTouched : targetPaint);
             canvas.drawText(target.getOrder()+"",target.getPercentageX(),target.getPercentageY()+target.getSize()*2f,orderPaint);
+        }
+    }
+
+    private void drawLines(){
+        final Paint linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+        linePaint.setStyle(Paint.Style.STROKE);
+        linePaint.setStrokeWidth(5);
+
+        for (int i=0; i<touchedPoints.size(); i++) {
+            TouchedPoint point = touchedPoints.get(i);
+
+            linePaint.setColor(getColorOfOrder(actualOrder + i));
+            PointF dPoint=point.getPoint();
+            canvas.drawLine((getWidth() / getMaxOrder()) * actualOrder - (getWidth() / getMaxOrder()) / 2, 0, dPoint.x, dPoint.y, linePaint);
         }
     }
 
@@ -422,6 +440,21 @@ public class wameCanvas extends View{
         float y;
         long timestamp;
         int touchedBy;
+
+        PointF getPoint(){
+            PointF point=new PointF(0,0);
+
+            double diffX=Math.abs(x-((getWidth() / getMaxOrder()) * actualOrder - (getWidth() / getMaxOrder()) / 2));
+
+            long timeDiff=Calendar.getInstance().getTimeInMillis()-timestamp;
+
+            double xAct=((getWidth() / getMaxOrder()) * actualOrder - (getWidth() / getMaxOrder()) / 2)+timeDiff*diffX/1000;
+            double yAct=timeDiff*y/1000;
+
+            point.set((float)xAct,(float)yAct);
+
+            return point;
+        }
     }
 
 }
