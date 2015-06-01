@@ -6,15 +6,19 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.ntilde.wame.GameActivity;
+import com.ntilde.wame.HomeActivity;
 import com.ntilde.wame.model.Level;
 import com.ntilde.wame.model.Position;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
+import java.util.List;
 
 
 public class wameCanvas extends View{
@@ -60,6 +64,8 @@ public class wameCanvas extends View{
 
         initCanvas(canvas);
 
+        drawTopBar();
+        drawBottomBar();
         drawTargets();
         drawTouchedPoints();
         if(level.getTime() != Level.NO_TIME && !gameOver && !gameCompleted) drawTime();
@@ -73,7 +79,7 @@ public class wameCanvas extends View{
             drawTargets();
             firstExecution = false;
         }
-        level.setScreenDimensions(getWidth(),getHeight());
+        level.setScreenDimensions(getWidth(), getHeight());
     }
 
     private void initPaints() {
@@ -96,8 +102,8 @@ public class wameCanvas extends View{
         timePaint.setTextSize(40);
         timePaint.setColor(Color.BLACK);
         timePaint.setTextAlign(Paint.Align.RIGHT);
-        String text = String.valueOf(diference);
-        canvas.drawText(text, (float) 0.9 * getWidth(), (float) 0.1 * getHeight(), timePaint);
+        String text = String.valueOf(diference) + "\"";
+        canvas.drawText(text, (float) 0.95 * getWidth(), (float) 0.06 * getHeight(), timePaint);
         if(diference == 0){
             gameOver();
         }else {
@@ -170,6 +176,7 @@ public class wameCanvas extends View{
                 }
 
                 if (completedPoints == getOrderPointsCount(actualOrder)) {
+                    drawBottomBar();
                     removeOrderPoints(actualOrder);
                     touchedPoints.remove(point);
                     i--;
@@ -186,6 +193,41 @@ public class wameCanvas extends View{
         if (painted > 0 && !gameOver && !gameCompleted) {
             postInvalidateDelayed(10);
         }
+    }
+
+    private void drawTopBar(){
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(Color.BLACK);
+        paint.setTypeface(Typeface.createFromAsset(context.getAssets(), "welbut.ttf"));
+        paint.setTextSize(40);
+        String text = "LEVEL " + HomeActivity.nextLevel;
+        canvas.drawText(text, getWidth() / 2 - paint.measureText(text)/2, (float) 0.06 * getHeight(), paint);
+
+        for(int i=0; i<getMaxOrder(); i++){
+            paint.setColor(getColorOfOrder(i+1));
+            canvas.drawRect(i*getWidth()/getMaxOrder(),
+                            (float) (getHeight()-getHeight()*0.91),
+                            i*getWidth()/getMaxOrder()+getWidth()/getMaxOrder(),
+                            (float) (getHeight()-getHeight()*0.9),
+                            paint);
+        }
+    }
+
+    private void drawBottomBar(){
+        Paint paintLine = new Paint(Paint.ANTI_ALIAS_FLAG);
+        Paint paintLineTouched = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paintLine.setColor(Color.BLACK);
+        paintLineTouched.setColor(getColorOfOrder(actualOrder));
+
+
+        for(int i=0; i<getOrderPointsCount(actualOrder); i++){
+            canvas.drawRect(i*getWidth()/getOrderPointsCount(actualOrder),
+                            getHeight()-getHeight()/100,
+                            i*getWidth()/getOrderPointsCount(actualOrder)+getWidth()/getOrderPointsCount(actualOrder),
+                            getHeight(),
+                            i < getOrderPositionsTouched(actualOrder) ? paintLineTouched : paintLine);
+        }
+
     }
 
     @Override
@@ -271,22 +313,6 @@ public class wameCanvas extends View{
     }
 
     /**
-     * Returns color of minimum order printable point
-     * @return
-     */
-    private int getColorOfMinOrder(){
-        int color = Color.BLACK;
-        int min = 50;
-        for (Position target : level.getPositions()){
-            if (target.getOrder() < min && !target.isCompleted()){
-                min = target.getOrder();
-                color = context.getResources().getColor(getResources().getIdentifier("targetColor" + target.getOrder(), "color", context.getPackageName()));
-            }
-        }
-        return color;
-    }
-
-    /**
      * Return higgest order
      */
     private int getMaxOrder(){
@@ -297,6 +323,33 @@ public class wameCanvas extends View{
             }
         }
         return max;
+    }
+
+    /**
+     * Return targets of a order
+     */
+    private List<Position> getOrderPositions(int order){
+        List<Position> positions = new ArrayList<>();
+        for(Position target : level.getPositions()){
+            if(target.getOrder() == order){
+                positions.add(target);
+            }
+        }
+        return positions;
+    }
+
+    /**
+     * Returns number of targets of a order which is touched
+     * @param order
+     * @return
+     */
+    private int getOrderPositionsTouched(int order){
+        List<Position> orderPositions = getOrderPositions(order);
+        int count = 0;
+        for(Position p : orderPositions){
+            if(p.isTouched()) count++;
+        }
+        return count;
     }
 
     /**
