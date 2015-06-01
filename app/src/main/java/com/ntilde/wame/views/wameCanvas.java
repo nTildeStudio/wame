@@ -127,7 +127,7 @@ public class wameCanvas extends View{
         targetPaintTouched.setStyle(Paint.Style.FILL_AND_STROKE);
         orderPaint.setTextAlign(Paint.Align.CENTER);
 
-        targetPaintBackground.setColor(Color.argb(130,255,255,255));
+        targetPaintBackground.setColor(Color.argb(130, 255, 255, 255));
 
         for(Position target:level.getPositions()){
             if(target.getOrder()<actualOrder) continue;
@@ -156,8 +156,9 @@ public class wameCanvas extends View{
             TouchedPoint point = touchedPoints.get(i);
 
             linePaint.setColor(getColorOfOrder(actualOrder + i));
-            PointF dPoint=point.getPoint();
-            canvas.drawLine((getWidth() / getMaxOrder()) * actualOrder - (getWidth() / getMaxOrder()) / 2, 0, dPoint.x, dPoint.y, linePaint);
+            PointF dPoint=point.getLineDestPoint();
+            PointF oPoint=point.getLineOrigPoint();
+            canvas.drawLine(oPoint.x, oPoint.y, dPoint.x, dPoint.y, linePaint);
         }
     }
 
@@ -172,10 +173,14 @@ public class wameCanvas extends View{
         for (int i=0; i<touchedPoints.size(); i++){
             TouchedPoint point = touchedPoints.get(i);
 
-            long timeNow = Calendar.getInstance().getTimeInMillis();
-            long radius = ((timeNow - point.timestamp) / 5) * (long) getSpeedOfOrder(actualOrder +i);
+            if(point.lineDrawing){
+                continue;
+            }
 
-            double diagonal = Math.hypot(Math.max(point.x, getWidth()-point.x), Math.max(point.y, getHeight()-point.y));
+            long timeNow = Calendar.getInstance().getTimeInMillis();
+            long radius = ((timeNow - point.timestamp - point.lineDrawingAnimationDuration) / 5) * (long) getSpeedOfOrder(actualOrder +i);
+
+            double diagonal = Math.hypot(Math.max(point.x, getWidth() - point.x), Math.max(point.y, getHeight() - point.y));
 
             if(radius < diagonal){
                 painted++;
@@ -440,18 +445,58 @@ public class wameCanvas extends View{
         float y;
         long timestamp;
         int touchedBy;
+        boolean lineDrawing=true;
+        int lineDrawingAnimationDuration;
+        long lineDrawingAnimationTimestampFull=0;
 
-        PointF getPoint(){
+        PointF getLineDestPoint(){
             PointF point=new PointF(0,0);
 
-            double diffX=Math.abs(x-((getWidth() / getMaxOrder()) * actualOrder - (getWidth() / getMaxOrder()) / 2));
+            lineDrawingAnimationDuration=1000;
+
+            int xDest=((getWidth() / getMaxOrder()) * actualOrder - (getWidth() / getMaxOrder()) / 2);
+
+            double diffX=Math.abs(x-xDest);
 
             long timeDiff=Calendar.getInstance().getTimeInMillis()-timestamp;
 
-            double xAct=((getWidth() / getMaxOrder()) * actualOrder - (getWidth() / getMaxOrder()) / 2)+timeDiff*diffX/1000;
-            double yAct=timeDiff*y/1000;
+            int direction = x>xDest?1:-1;
+            double xAct=timeDiff>=lineDrawingAnimationDuration?xDest+diffX*direction:xDest+timeDiff*diffX/lineDrawingAnimationDuration*direction;
+            double yAct=timeDiff>=lineDrawingAnimationDuration?y:timeDiff*y/lineDrawingAnimationDuration;
 
             point.set((float)xAct,(float)yAct);
+
+            return point;
+        }
+
+        PointF getLineOrigPoint(){
+
+            PointF destPoint=getLineDestPoint();
+
+            int xOrig=((getWidth() / getMaxOrder()) * actualOrder - (getWidth() / getMaxOrder()) / 2);
+
+            PointF point=new PointF(xOrig,0);
+
+            if(Math.hypot(Math.abs(xOrig - destPoint.x), destPoint.y)>=getWidth()/getMaxOrder()){
+                if(lineDrawingAnimationTimestampFull==0){
+                    lineDrawingAnimationTimestampFull=Calendar.getInstance().getTimeInMillis();
+                }
+
+                int xDest=((getWidth() / getMaxOrder()) * actualOrder - (getWidth() / getMaxOrder()) / 2);
+
+                double diffX=Math.abs(x-xDest);
+
+                long timeDiff=Calendar.getInstance().getTimeInMillis()-lineDrawingAnimationTimestampFull;
+
+                int direction = x>xDest?1:-1;
+                double xAct=timeDiff>=lineDrawingAnimationDuration?xDest+diffX*direction:xDest+timeDiff*diffX/lineDrawingAnimationDuration*direction;
+                double yAct=timeDiff>=lineDrawingAnimationDuration?y:timeDiff*y/lineDrawingAnimationDuration;
+
+                lineDrawing=timeDiff>=lineDrawingAnimationDuration?false:true;
+
+                point.set((float)xAct,(float)yAct);
+
+            }
 
             return point;
         }
