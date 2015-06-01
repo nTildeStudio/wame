@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.ntilde.wame.GameActivity;
+import com.ntilde.wame.HomeActivity;
 import com.ntilde.wame.R;
 import com.ntilde.wame.model.Level;
 import com.ntilde.wame.model.Position;
@@ -90,6 +91,7 @@ public class wameCanvas extends View{
         this.actualOrder = 1;
         this.gameOver = false;
         this.gameCompleted = false;
+        ((PTextView)((GameActivity) context).findViewById(R.id.game_title)).setText("LEVEL " + HomeActivity.nextLevel+1);
         restartTargets();
     }
 
