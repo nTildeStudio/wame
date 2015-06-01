@@ -10,7 +10,7 @@ public class Position implements Serializable{
     private int size;
     private int x;
     private int y;
-
+    private float speed;
     private int screenWidth;
     private int screenHeight;
     private int touchedBy = DONT_TOUCHED; //Indicates if touched by any finger
@@ -83,6 +83,14 @@ public class Position implements Serializable{
 
     public boolean isCompleted(){
         return completed;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
     }
 
     public void restart() {

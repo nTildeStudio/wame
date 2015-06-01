@@ -9,7 +9,6 @@ public class Level implements Serializable{
 
     private List<Position> positions;
     private int time;
-    private List<Integer> speed;
 
     public void setPositions(List<Position> positions){
         this.positions=positions;
@@ -25,14 +24,6 @@ public class Level implements Serializable{
 
     public int getTime(){
         return time;
-    }
-
-    public void setSpeed(List<Integer> speed){
-        this.speed = speed;
-    }
-
-    public List<Integer> getSpeed(){
-        return speed;
     }
 
     public void setScreenDimensions(int width, int height){

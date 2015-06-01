@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -143,6 +144,7 @@ public class wameCanvas extends View{
 
     private void drawTouchedPoints(){
         final Paint touchedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
         touchedPaint.setStyle(Paint.Style.STROKE);
         touchedPaint.setStrokeWidth(15);
 
@@ -152,7 +154,7 @@ public class wameCanvas extends View{
             TouchedPoint point = touchedPoints.get(i);
 
             long timeNow = Calendar.getInstance().getTimeInMillis();
-            long radius = ((timeNow - point.timestamp) / 5) * level.getSpeed().get(actualOrder-1);
+            long radius = ((timeNow - point.timestamp) / 5) * (long) getSpeedOfOrder(actualOrder +i);
 
             double diagonal = Math.hypot(Math.max(point.x, getWidth()-point.x), Math.max(point.y, getHeight()-point.y));
 
@@ -306,6 +308,21 @@ public class wameCanvas extends View{
             }
         }
         return color;
+    }
+
+    /**
+     * Return speed of n order
+     * @param order
+     * @return
+     */
+    private float getSpeedOfOrder(int order) {
+        int speed = 1;
+        for (Position target : level.getPositions()){
+            if (target.getOrder() == order){
+                return target.getSpeed();
+            }
+        }
+        return speed;
     }
 
     /**
