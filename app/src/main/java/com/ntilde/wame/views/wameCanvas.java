@@ -413,6 +413,8 @@ public class wameCanvas extends View{
         gameCompleted = true;
         drawTargets();
         ((GameActivity) context).showWin();
+        HomeActivity.gameProgress.setMaxLevel(HomeActivity.nextLevel+1);
+        HomeActivity.gameProgress.save(HomeActivity.mGoogleApiClient);
     }
 
     /**
