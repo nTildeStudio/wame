@@ -8,6 +8,7 @@
     tools:context="com.ntilde.wame.HomeActivity"
     android:orientation="vertical">
 
+    <!-- Pantalla-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,8 +27,20 @@
             <!-- Separador superior -->
             <LinearLayout
                 android:layout_width="match_parent"
+                android:gravity="top"
+                android:orientation="horizontal"
+                android:weightSum="10"
                 android:layout_height="0dp"
-                android:layout_weight="1.5"></LinearLayout>
+                android:layout_weight="1.5">
+
+                <ImageView
+                    android:id="@+id/home_sound"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/home_sound_on"
+                    android:adjustViewBounds="true"/>
+            </LinearLayout>
 
             <!-- Boton de play -->
             <ImageView

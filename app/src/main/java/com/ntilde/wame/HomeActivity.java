@@ -1,7 +1,9 @@
 package com.ntilde.wame;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -29,6 +32,7 @@ public class HomeActivity extends ActionBarActivity {
     protected static int maxLevel=6;
     protected static Levels levels;
     private MediaPlayer music;
+    private boolean sound = true;
 
     @Override
     protected void onResume() {
@@ -143,6 +147,32 @@ public class HomeActivity extends ActionBarActivity {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse("market://details?id=com.ntilde.wame"));
                 startActivity(intent);
+            }
+        });
+        findViewById(R.id.home_sound).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(sound){
+                    //mute audio
+                    AudioManager  amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
+                    amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
+                    amanager.setStreamMute(AudioManager.STREAM_ALARM, true);
+                    amanager.setStreamMute(AudioManager.STREAM_MUSIC, true);
+                    amanager.setStreamMute(AudioManager.STREAM_RING, true);
+                    amanager.setStreamMute(AudioManager.STREAM_SYSTEM, true);
+                    ((ImageView)findViewById(R.id.home_sound)).setImageDrawable(getResources().getDrawable(R.drawable.home_sound_off));
+                    sound = false;
+                }else{
+                    //unmute audio
+                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
+                    amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, false);
+                    amanager.setStreamMute(AudioManager.STREAM_ALARM, false);
+                    amanager.setStreamMute(AudioManager.STREAM_MUSIC, false);
+                    amanager.setStreamMute(AudioManager.STREAM_RING, false);
+                    amanager.setStreamMute(AudioManager.STREAM_SYSTEM, false);
+                    ((ImageView)findViewById(R.id.home_sound)).setImageDrawable(getResources().getDrawable(R.drawable.home_sound_on));
+                    sound = true;
+                }
             }
         });
 
