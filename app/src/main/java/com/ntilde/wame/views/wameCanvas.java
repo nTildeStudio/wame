@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.media.MediaPlayer;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -127,7 +126,7 @@ public class wameCanvas extends View{
         targetPaintTouched.setStyle(Paint.Style.FILL_AND_STROKE);
         orderPaint.setTextAlign(Paint.Align.CENTER);
 
-        targetPaintBackground.setColor(Color.argb(130, 255, 255, 255));
+        targetPaintBackground.setColor(Color.argb(130,255,255,255));
 
         for(Position target:level.getPositions()){
             if(target.getOrder()<actualOrder) continue;
@@ -178,7 +177,7 @@ public class wameCanvas extends View{
             }
 
             long timeNow = Calendar.getInstance().getTimeInMillis();
-            long radius = ((timeNow - point.timestamp - point.lineDrawingAnimationDuration) / 5) * (long) getSpeedOfOrder(actualOrder +i);
+            long radius = ((timeNow - point.lineDrawingAnimationTimestampEnd) / 5) * (long) getSpeedOfOrder(actualOrder +i);
 
             double diagonal = Math.hypot(Math.max(point.x, getWidth() - point.x), Math.max(point.y, getHeight() - point.y));
 
@@ -448,13 +447,21 @@ public class wameCanvas extends View{
         boolean lineDrawing=true;
         int lineDrawingAnimationDuration;
         long lineDrawingAnimationTimestampFull=0;
+        long lineDrawingAnimationTimestampEnd;
+
+        int order=-1;
 
         PointF getLineDestPoint(){
+
+            if(order==-1){
+                order=touchedPointsCount;
+            }
+
             PointF point=new PointF(0,0);
 
             lineDrawingAnimationDuration=1000;
 
-            int xDest=((getWidth() / getMaxOrder()) * actualOrder - (getWidth() / getMaxOrder()) / 2);
+            int xDest=((getWidth() / getMaxOrder()) * order - (getWidth() / getMaxOrder()) / 2);
 
             double diffX=Math.abs(x-xDest);
 
@@ -473,7 +480,7 @@ public class wameCanvas extends View{
 
             PointF destPoint=getLineDestPoint();
 
-            int xOrig=((getWidth() / getMaxOrder()) * actualOrder - (getWidth() / getMaxOrder()) / 2);
+            int xOrig=((getWidth() / getMaxOrder()) * order - (getWidth() / getMaxOrder()) / 2);
 
             PointF point=new PointF(xOrig,0);
 
@@ -482,7 +489,7 @@ public class wameCanvas extends View{
                     lineDrawingAnimationTimestampFull=Calendar.getInstance().getTimeInMillis();
                 }
 
-                int xDest=((getWidth() / getMaxOrder()) * actualOrder - (getWidth() / getMaxOrder()) / 2);
+                int xDest=((getWidth() / getMaxOrder()) * order - (getWidth() / getMaxOrder()) / 2);
 
                 double diffX=Math.abs(x-xDest);
 
@@ -492,6 +499,9 @@ public class wameCanvas extends View{
                 double xAct=timeDiff>=lineDrawingAnimationDuration?xDest+diffX*direction:xDest+timeDiff*diffX/lineDrawingAnimationDuration*direction;
                 double yAct=timeDiff>=lineDrawingAnimationDuration?y:timeDiff*y/lineDrawingAnimationDuration;
 
+                if(lineDrawing){
+                    lineDrawingAnimationTimestampEnd=Calendar.getInstance().getTimeInMillis();
+                }
                 lineDrawing=timeDiff>=lineDrawingAnimationDuration?false:true;
 
                 point.set((float)xAct,(float)yAct);
