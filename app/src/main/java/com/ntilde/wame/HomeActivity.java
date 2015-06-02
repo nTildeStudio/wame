@@ -110,7 +110,18 @@ public class HomeActivity extends ActionBarActivity {
                 HomeActivity.this.startActivity(new Intent(HomeActivity.this, GameActivity.class));
             }
         });
+        findViewById(R.id.home_ranking).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+            }
+        });
+        findViewById(R.id.home_points).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         findViewById(R.id.home_share_google_play).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,7 +136,6 @@ public class HomeActivity extends ActionBarActivity {
                 startActivity(Intent.createChooser(sharingIntent, getResources().getString(R.string.home_share_google_play)));
             }
         });
-
         findViewById(R.id.home_rate_google_play).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
