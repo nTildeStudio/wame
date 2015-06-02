@@ -152,9 +152,9 @@ public class HomeActivity extends ActionBarActivity {
         findViewById(R.id.home_sound).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
                 if(sound){
                     //mute audio
-                    AudioManager  amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
                     amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
                     amanager.setStreamMute(AudioManager.STREAM_ALARM, true);
                     amanager.setStreamMute(AudioManager.STREAM_MUSIC, true);
@@ -164,7 +164,6 @@ public class HomeActivity extends ActionBarActivity {
                     sound = false;
                 }else{
                     //unmute audio
-                    AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
                     amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, false);
                     amanager.setStreamMute(AudioManager.STREAM_ALARM, false);
                     amanager.setStreamMute(AudioManager.STREAM_MUSIC, false);
