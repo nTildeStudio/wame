@@ -2,10 +2,45 @@
     "levels":[
         {
             "positions":[
+                {"order":1,"x":50,"y":50,"size":10,"speed":1}
+            ],
+            "time":-1
+        },
+        {
+            "positions":[
+                {"order":1,"x":25,"y":50,"size":10,"speed":1},
+                {"order":1,"x":75,"y":50,"size":10,"speed":1}
+            ],
+            "time":-1
+        },
+        {
+            "positions":[
+                {"order":1,"x":50,"y":25,"size":10,"speed":1},
+                {"order":1,"x":50,"y":75,"size":10,"speed":1}
+            ],
+            "time":-1
+        },
+        {
+            "positions":[
                 {"order":1,"x":25,"y":25,"size":10,"speed":1},
                 {"order":1,"x":75,"y":75,"size":10,"speed":1}
             ],
             "time":-1
+        },
+        {
+            "positions":[
+                {"order":1,"x":25,"y":50,"size":10,"speed":1},
+                {"order":2,"x":75,"y":50,"size":10,"speed":1}
+            ],
+            "time":-1
+        },
+        {
+          "positions":[
+            {"order":1,"x":10,"y":10,"size":10,"speed":1},
+            {"order":2,"x":80,"y":30,"size":10,"speed":1},
+            {"order":3,"x":25,"y":90,"size":10,"speed":1}
+          ],
+          "time":-1
         },
         {
             "positions":[
