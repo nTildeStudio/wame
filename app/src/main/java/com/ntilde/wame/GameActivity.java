@@ -4,10 +4,16 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.ntilde.wame.model.Level;
 import com.ntilde.wame.views.wameCanvas;
 
@@ -15,18 +21,27 @@ import com.ntilde.wame.views.wameCanvas;
 public class GameActivity extends ActionBarActivity {
 
     private wameCanvas board;
-    private LinearLayout winBlock;
-    private LinearLayout loseBlock;
+    private RelativeLayout winBlock;
+    private RelativeLayout loseBlock;
     private ImageView restart;
 
     private Level level;
 
     private MediaPlayer music;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        AdView mAdViewWin = (AdView) findViewById(R.id.game_win_add);
+        AdView mAdViewLose = (AdView) findViewById(R.id.game_lose_add);
+        AdRequest adRequest = new AdRequest.Builder().build();
+
+
+        mAdViewWin.loadAd(adRequest);
+        mAdViewLose.loadAd(adRequest);
 
         loadUI();
         getActualLevel();
@@ -50,8 +65,8 @@ public class GameActivity extends ActionBarActivity {
 
     private void loadUI(){
         board=(wameCanvas)findViewById(R.id.game_board);
-        winBlock = (LinearLayout) findViewById(R.id.game_win_block);
-        loseBlock = (LinearLayout) findViewById(R.id.game_lose_block);
+        winBlock = (RelativeLayout) findViewById(R.id.game_win_block);
+        loseBlock = (RelativeLayout) findViewById(R.id.game_lose_block);
         restart = (ImageView) findViewById(R.id.game_restart);
 
         restart.setOnClickListener(new View.OnClickListener() {

@@ -38,6 +38,8 @@ public class wameCanvas extends View{
     private ArrayList<TouchedPoint> touchedPoints;
     private int touchedPointsCount;
 
+    private int angle = 0;
+
     public wameCanvas(Context context) {
         super(context);
         this.context = context;
@@ -114,6 +116,7 @@ public class wameCanvas extends View{
     }
 
     private void drawTargets(){
+
         Paint targetPaintBackground = new Paint(Paint.ANTI_ALIAS_FLAG);
         Paint targetPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         Paint targetPaintTouched = new Paint(Paint.ANTI_ALIAS_FLAG);
